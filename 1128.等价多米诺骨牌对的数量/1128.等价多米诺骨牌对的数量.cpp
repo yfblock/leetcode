@@ -43,13 +43,48 @@
  */
 #include <iostream>
 #include <vector>
+#include <map>
 using namespace std;
 
 // @lc code=start
 class Solution {
 public:
     int numEquivDominoPairs(vector<vector<int>>& dominoes) {
-        
+        // 虽然不知道为什么在 Stack Tag 下  但是用 map 实现更加简单
+        // 因为最大只是 99 手写数组可能更快？
+
+        // map version
+        // map<int, int> resultMap;
+        // for(vector<int> sc : dominoes) {
+        //     int index = 0;
+        //     if(sc[0] > sc[1]) index = sc[0] * 10 + sc[1];
+        //     else index = sc[1] * 10 + sc[0];
+
+        //     resultMap[index] ++;
+        // }
+
+        // array version
+        int resultMap[100] = {0};
+        for(vector<int> sc : dominoes) {
+            int index = 0;
+            if(sc[0] > sc[1]) index = sc[0] * 10 + sc[1];
+            else index = sc[1] * 10 + sc[0];
+
+            resultMap[index] ++;
+        }
+
+
+
+        // 计算结果
+        uint64_t ans = 0;
+        for(int i = 11;i <= 99; i++) {
+            // 由于从小到大排列  / 2
+            // 组合数量 = A(2, n) / 2 = A(n - 2, n) / 2
+            int n = resultMap[i];
+            if(n <= 1) continue;
+            ans += n * (n - 1) / 2;
+        }
+        return ans;
     }
 };
 // @lc code=end
