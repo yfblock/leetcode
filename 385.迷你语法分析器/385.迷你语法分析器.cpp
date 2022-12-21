@@ -55,6 +55,7 @@
 
 #include <iostream>
 #include <vector>
+#include <stack>
 using namespace std;
 
 class NestedInteger {
@@ -109,10 +110,48 @@ class NestedInteger {
  */
 class Solution {
 public:
-    NestedInteger dfs(string s, int &index);
-    NestedInteger deserialize(string s) {
+    int getInteger(string &s, int &i) {
+        int v = 0;
+        bool sign = false;
+        for(;;i++) {
+            if(s[i] == '-') sign = true;
+            else if(s[i] >= '0' && s[i] <= '9') v= v*10 + s[i] - '0';
+            else {
+                i--;
+                break;
+            }
+        }
+        return sign ? -v : v;
+    }
 
+    NestedInteger dfs(string &s, int &i) {
+        if(s[i] == '[') {
+            NestedInteger list;
+            i++;
+            for(;i < s.size() && s[i] != ']';i++) {
+                if(s[i] == '[') {
+                    list.add(dfs(s, i));
+                } else if(s[i] == ',') {
+
+                } else {
+                    list.add(getInteger(s, i));
+                }
+            }
+            // i++;
+            return list;
+        } else {
+            return NestedInteger(getInteger(s, i));
+        }
+    }
+
+    NestedInteger deserialize(string s) {
+        int i = 0;
+        return dfs(s, i);
     }
 };
 // @lc code=end
 
+int main() {
+    Solution s;
+    s.deserialize("[123,[456,[789]]]");
+}
